@@ -1,0 +1,45 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: false # Config Server konfigürasyon dağıtır, diğer servisleri bilmesine gerek yoktur.
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  cloud:
+    config:
+      server:
+        git:
+          uri: file://${user.dir} # IDE'nin çalıştığı ana proje kök dizinini otomatik alır
+          search-paths: configs   # Kök dizin altındaki klasör adı
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///app/workspace # Docker container içindeki çalışma dizini
+          search-paths: configs
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

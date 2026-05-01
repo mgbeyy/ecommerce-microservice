@@ -1,0 +1,79 @@
+# ==========================================
+# 1. Maven / Build Çıktıları (Tüm servisler için)
+# ==========================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ==========================================
+# 2. IDE Dosyaları (IntelliJ, Eclipse, VS Code vb.)
+# ==========================================
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### STS / Eclipse ###
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+### NetBeans ###
+**/nbproject/private/
+**/nbbuild/
+**/dist/
+**/nbdist/
+**/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# ==========================================
+# 3. İşletim Sistemi Dosyaları
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==========================================
+# 4. Proje Spesifik ve Güvenlik (Ekstra Eklenenler)
+# ==========================================
+# Çevresel değişkenler ve şifreler (Kesinlikle git'e atılmamalı!)
+.env
+.env.local
+.env.*
+!.env.example
+
+# Log dosyaları (Çalışırken oluşan gereksiz loglar)
+*.log
+logs/
+
+# Docker ekstraları (Lokalde ezmek için kullanılan compose dosyaları)
+docker-compose.override.yml
+
+# Yardım dosyaları
+HELP.md
+
+# (Opsiyonel) Eğer ileride aynı repoya bir React/Vue frontend servisi eklersen:
+node_modules/
