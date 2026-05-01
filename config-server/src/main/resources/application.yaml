@@ -21,8 +21,8 @@ spring:
     config:
       server:
         git:
-          uri: file://${user.dir} # IDE'nin çalıştığı ana proje kök dizinini otomatik alır
-          search-paths: configs   # Kök dizin altındaki klasör adı
+          uri: https://github.com/MgBeyy/ecommerce-config-repo.git
+          default-label: main
 eureka:
   client:
     service-url:
@@ -37,8 +37,8 @@ spring:
     config:
       server:
         git:
-          uri: file:///app/workspace # Docker container içindeki çalışma dizini
-          search-paths: configs
+          uri: https://github.com/MgBeyy/ecommerce-config-repo.git
+          default-label: main
 eureka:
   client:
     service-url:
