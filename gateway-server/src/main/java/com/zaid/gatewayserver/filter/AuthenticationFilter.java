@@ -6,11 +6,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,15 +22,18 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JwtUtil jwtUtil;
+    private final HandlerExceptionResolver exceptionResolver;
 
     private final List<String> openApiEndpoints = List.of(
-            "/auth/**",
+            "/api/v1/auth/**",
             "/eureka/**",
             "/v3/api-docs/**"
     );
 
-    public AuthenticationFilter(JwtUtil jwtUtil) {
+    public AuthenticationFilter(JwtUtil jwtUtil,
+                                @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
         this.jwtUtil = jwtUtil;
+        this.exceptionResolver = exceptionResolver;
     }
 
     @Override
@@ -66,7 +71,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(wrappedRequest, response);
 
         } catch (Exception e) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            exceptionResolver.resolveException(request, response, null, e);
         }
     }
 
