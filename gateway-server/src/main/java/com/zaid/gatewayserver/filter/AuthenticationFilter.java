@@ -25,9 +25,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver exceptionResolver;
 
     private final List<String> openApiEndpoints = List.of(
+            "/swagger-ui/**",
             "/api/v1/auth/**",
             "/eureka/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/**/v3/api-docs/**",
+            "/docs/**"
     );
 
     public AuthenticationFilter(JwtUtil jwtUtil,
