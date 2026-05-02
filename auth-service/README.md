@@ -10,7 +10,7 @@ Bu servis **token doğrulama (validation)** işlemi yapmaz. Mikroservis mimarimi
 ---
 
 ## Kullanılan Teknolojiler
-* **Java 21 & Spring Boot 3.x**
+* **Java 21 & Spring Boot 4.0.6**
 * **Spring Security 6** (Sadece Password Encoder ve yapılandırma için)
 * **JJWT (0.11.5)** (Token üretimi)
 * **Spring Data JPA & Hibernate**
