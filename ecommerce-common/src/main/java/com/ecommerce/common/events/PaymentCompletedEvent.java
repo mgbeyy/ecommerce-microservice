@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentCompletedEvent implements Serializable {
-    private String orderId;
-    private String paymentId;
+    private Long orderId;
+    private Long paymentId;
     private String paymentTransactionId; // Iyzico'dan dönen referans kodu
 }

@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcessPaymentCommand implements Serializable {
-    private String orderId;
-    private String customerId;
+    private Long orderId;
+    private Long customerId;
     private BigDecimal totalAmount;
     // MVP için kart bilgileri
     private String cardNumber;

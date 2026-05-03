@@ -21,14 +21,14 @@ import java.util.UUID;
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "order_id", nullable = false)
-    private UUID orderId;
+    @Column(name = "order_id", nullable = false, unique = true)
+    private Long orderId;
 
     @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    private Long userId;
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -41,10 +41,10 @@ public class Payment {
     private String iyzicoTransactionId;
 
     @Column(name = "created_by")
-    private UUID createdBy;
+    private Long createdBy;
 
     @Column(name = "updated_by")
-    private UUID updatedBy;
+    private Long updatedBy;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

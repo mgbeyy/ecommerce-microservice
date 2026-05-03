@@ -18,7 +18,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -37,8 +36,8 @@ public class PaymentService {
             // 1. Veritabanına kaydet (Başlangıçta PENDING / FAILED kaydetmiyoruz, duruma göre kaydedeceğiz.
             // Ancak Idempotency için önce DB'ye yazmak önemli)
             Payment payment = Payment.builder()
-                    .orderId(UUID.fromString(command.getOrderId()))
-                    .userId(UUID.fromString(command.getCustomerId()))
+                    .orderId(command.getOrderId())
+                    .userId(command.getCustomerId())
                     .amount(command.getTotalAmount())
                     .status(PaymentStatus.FAILED) // Varsayılan FAILED, başarılı olursa güncelleyeceğiz
                     .build();
@@ -80,7 +79,7 @@ public class PaymentService {
         }
     }
 
-    private void publishSuccessEvent(String orderId, String transactionId) {
+    private void publishSuccessEvent(Long orderId, String transactionId) {
         PaymentCompletedEvent event = PaymentCompletedEvent.builder()
                 .orderId(orderId)
                 .paymentTransactionId(transactionId) // Senin belirttiğin doğru alan adı
@@ -88,7 +87,7 @@ public class PaymentService {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ORDER_PAYMENT_SUCCESS_ROUTING_KEY, event);
     }
 
-    private void publishFailedEvent(String orderId, String errorMessage) {
+    private void publishFailedEvent(Long orderId, String errorMessage) {
         PaymentFailedEvent event = PaymentFailedEvent.builder()
                 .orderId(orderId)
                 .errorMessage(errorMessage)

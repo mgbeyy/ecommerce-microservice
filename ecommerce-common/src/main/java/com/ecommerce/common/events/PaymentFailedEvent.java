@@ -11,6 +11,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentFailedEvent implements Serializable {
-    private String orderId;
+    private Long orderId;
     private String errorMessage; // Örn: "Yetersiz bakiye"
 }
