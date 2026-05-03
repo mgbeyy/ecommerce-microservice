@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:product_test_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  cloud:
+    config:
+      enabled: false # Config server bağlantısını iptal et
+eureka:
+  client:
+    enabled: false # Eureka bağlantısını iptal et
