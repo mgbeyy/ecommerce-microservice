@@ -4,7 +4,7 @@
 The project is a Spring Boot and Spring Cloud-based microservices architecture designed for an E-commerce platform. It provides a robust foundational infrastructure including centralized configuration management, service discovery, and a secure API gateway. 
 
 **Current Status vs. Planned MVP:**
-* **Currently Implemented:** The foundational infrastructure (API Gateway, Eureka Server, Config Server) and the business domains (`auth-service`, `product-service`, and `basket-service`) are fully built. The system employs a Layered Architecture (Controller -> Service -> Repository) and handles synchronous REST routing and security validation via the Gateway. Centralized Swagger API documentation is also integrated at the Gateway.
+* **Currently Implemented:** The foundational infrastructure (API Gateway, Eureka Server, Config Server), a shared module (`ecommerce-common`), and the business domains (`auth-service`, `product-service`, and `basket-service`) are fully built. The system employs a Layered Architecture (Controller -> Service -> Repository) and handles synchronous REST routing and security validation via the Gateway. Centralized Swagger API documentation is also integrated at the Gateway.
 * **Planned for MVP:** The finalized architecture will include asynchronous event-driven communication (RabbitMQ) and distributed caching (Redis). A major upcoming architectural feature is the Saga Orchestration pattern (via a custom State Machine) for handling distributed transactions across the Order and Payment services.
 
 ## 2. Directory Structure
@@ -32,6 +32,9 @@ d:\Programming\n11Bootcamp\n11-bitirme\ecommerce-microservice/
 │   ├── product-service.yml    # DB, Eureka, and Server configs for Product Service
 │   ├── order-service.yml      # Placeholder for future Order service
 │   └── payment-service.yml    # Placeholder for future Payment service
+├── ecommerce-common/          # [CURRENT] Shared Common Module (DTOs, events, and commands)
+│   ├── pom.xml
+│   └── src/main/java/com/ecommerce/common/
 ├── eureka-server/             # [CURRENT] Netflix Eureka Service Discovery Server
 │   ├── pom.xml
 │   └── src/main/resources/application.yaml
@@ -47,10 +50,11 @@ d:\Programming\n11Bootcamp\n11-bitirme\ecommerce-microservice/
 
 ## 3. Microservices Breakdown
 
-### Existing Services (Phase 1 - Implemented)
+### Existing Services & Shared Modules (Phase 1 - Implemented)
 * **Eureka Server (`eureka-server`):** Service Registry and Discovery. Port: `8761`.
 * **Config Server (`config-server`):** Centralized configuration management using a remote Git repository. Port: `8888`.
 * **API Gateway (`gateway-server`):** Single entry point for external traffic. Handles routing, strict JWT validation, and centralizes Swagger UI documentation. Port: `8080`.
+* **Ecommerce Common (`ecommerce-common`):** Shared library module containing reusable DTOs, events (e.g., `PaymentFailedEvent`, `PaymentCompletedEvent`), and commands (e.g., `ProcessPaymentCommand`) used across services.
 * **Authentication Service (`auth-service`):** User registration, login, and JWT generation. Uses PostgreSQL. Port: `8081`.
 * **Product Service (`product-service`):** Product listing and management with pagination. Uses PostgreSQL. Port: `8082`.
 * **Basket Service (`basket-service`):** Add/remove/update cart functionalities. Uses Redis (with AOF/RDB enabled for persistence). Port: `8083`.
