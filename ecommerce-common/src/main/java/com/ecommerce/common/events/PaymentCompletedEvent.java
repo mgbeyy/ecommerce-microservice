@@ -12,5 +12,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class PaymentCompletedEvent implements Serializable {
     private String orderId;
+    private String paymentId;
     private String paymentTransactionId; // Iyzico'dan dönen referans kodu
 }

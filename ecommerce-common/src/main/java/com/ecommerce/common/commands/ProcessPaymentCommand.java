@@ -15,4 +15,9 @@ public class ProcessPaymentCommand implements Serializable {
     private String orderId;
     private String customerId;
     private BigDecimal totalAmount;
+    // MVP için kart bilgileri
+    private String cardNumber;
+    private String expireMonth;
+    private String expireYear;
+    private String cvc;
 }
