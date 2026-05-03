@@ -4,7 +4,7 @@
 The project is a Spring Boot and Spring Cloud-based microservices architecture designed for an E-commerce platform. It provides a robust foundational infrastructure including centralized configuration management, service discovery, and a secure API gateway. 
 
 **Current Status vs. Planned MVP:**
-* **Currently Implemented:** The foundational infrastructure (API Gateway, Eureka Server, Config Server) and the initial business domains (`auth-service` and `product-service`) are fully built. The system employs a Layered Architecture (Controller -> Service -> Repository) and handles synchronous REST routing and security validation via the Gateway. Centralized Swagger API documentation is also integrated at the Gateway.
+* **Currently Implemented:** The foundational infrastructure (API Gateway, Eureka Server, Config Server) and the business domains (`auth-service`, `product-service`, and `basket-service`) are fully built. The system employs a Layered Architecture (Controller -> Service -> Repository) and handles synchronous REST routing and security validation via the Gateway. Centralized Swagger API documentation is also integrated at the Gateway.
 * **Planned for MVP:** The finalized architecture will include asynchronous event-driven communication (RabbitMQ) and distributed caching (Redis). A major upcoming architectural feature is the Saga Orchestration pattern (via a custom State Machine) for handling distributed transactions across the Order and Payment services.
 
 ## 2. Directory Structure
@@ -18,12 +18,16 @@ d:\Programming\n11Bootcamp\n11-bitirme\ecommerce-microservice/
 ├── auth-service/              # [CURRENT] Authentication Microservice
 │   ├── pom.xml
 │   └── src/main/java/.../controller/AuthController.java
+├── basket-service/            # [CURRENT] Basket Microservice
+│   ├── pom.xml
+│   └── src/main/java/.../controller/BasketController.java
 ├── config-server/             # [CURRENT] Spring Cloud Config Server
 │   ├── pom.xml
 │   └── src/main/resources/application.yaml
 ├── configs/                   # [CURRENT] Git submodule repository for centralized configurations
 │   ├── application.yml
 │   ├── auth-service.yml       # DB, Eureka, and Server configs for Auth Service
+│   ├── basket-service.yml     # Redis, Eureka, and Server configs for Basket Service
 │   ├── gateway-service.yml    # Routing and JWT configs for Gateway
 │   ├── product-service.yml    # DB, Eureka, and Server configs for Product Service
 │   ├── order-service.yml      # Placeholder for future Order service
@@ -39,7 +43,7 @@ d:\Programming\n11Bootcamp\n11-bitirme\ecommerce-microservice/
     └── src/main/java/.../controller/ProductController.java
 ```
 
-*(Note: Additional services outlined in the project blueprint, such as Basket, Order, and Payment, are planned but not yet implemented in this directory.)*
+*(Note: Additional services outlined in the project blueprint, such as Order and Payment, are planned but not yet implemented in this directory.)*
 
 ## 3. Microservices Breakdown
 
@@ -49,16 +53,16 @@ d:\Programming\n11Bootcamp\n11-bitirme\ecommerce-microservice/
 * **API Gateway (`gateway-server`):** Single entry point for external traffic. Handles routing, strict JWT validation, and centralizes Swagger UI documentation. Port: `8080`.
 * **Authentication Service (`auth-service`):** User registration, login, and JWT generation. Uses PostgreSQL. Port: `8081`.
 * **Product Service (`product-service`):** Product listing and management with pagination. Uses PostgreSQL. Port: `8082`.
+* **Basket Service (`basket-service`):** Add/remove/update cart functionalities. Uses Redis (with AOF/RDB enabled for persistence). Port: `8083`.
 
 ### Planned Services (Phase 2 - To Be Implemented)
-* **Basket Service:** Add/remove/update cart functionalities. Will use Redis (with AOF/RDB enabled for persistence).
 * **Order Service (Orchestrator):** Order creation and workflow management. Operates the custom State Machine for the Saga pattern. Will use PostgreSQL.
 * **Payment Service:** Iyzico integration for handling payments. Will use PostgreSQL.
 
 ## 4. Configurations & Infrastructure
 * **Databases & Caching:** 
-  * **[CURRENT]** The `auth-service` and `product-service` use independent PostgreSQL databases.
-  * **[PLANNED]** Future microservices will each have independent PostgreSQL schemas. Redis will be utilized for transient data like basket management, with AOF enabled to prevent data loss.
+  * **[CURRENT]** The `auth-service` and `product-service` use independent PostgreSQL databases. The `basket-service` uses Redis with AOF/RDB enabled for persistent basket management.
+  * **[PLANNED]** Future microservices will each have independent PostgreSQL schemas.
 * **Centralized Configs:** **[CURRENT]** Microservices fetch their properties from the `config-server`, which reads YAML files located in the `configs/` repository.
 * **Containerization & Deployment:** **[PLANNED]** The project opts against traditional Dockerfiles. Instead, image building will be handled via the Jib plugin (`mvn jib:dockerBuild`) to push directly to the local Docker Daemon. A comprehensive `docker-compose.yml` is planned to provision the entire infrastructure (PostgreSQL, Redis, RabbitMQ) and Java services for local testing.
 
