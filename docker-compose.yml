@@ -1,0 +1,264 @@
+version: '3.8'
+
+services:
+  # Infrastructure
+  postgres-server:
+    image: postgres:15-alpine
+    container_name: postgres-server
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      ecommerce-network:
+        aliases:
+          - postgres
+          - postgres-server
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis-server:
+    image: redis:7-alpine
+    container_name: redis-server
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      ecommerce-network:
+        aliases:
+          - redis-server
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  rabbitmq-server:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq-server
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      ecommerce-network:
+        aliases:
+          - rabbitmq
+          - rabbitmq-server
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Java Services
+  eureka-server:
+    image: ecommerce-microservice/eureka-server:latest
+    container_name: eureka-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      ecommerce-network:
+        aliases:
+          - eureka-server
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  config-server:
+    image: ecommerce-microservice/config-server:latest
+    container_name: config-server
+    depends_on:
+      - eureka-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      ecommerce-network:
+        aliases:
+          - config-server
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  auth-service:
+    image: ecommerce-microservice/auth-service:latest
+    container_name: auth-service
+    depends_on:
+      - config-server
+      - postgres-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - DB_HOST=postgres-server
+      - DB_USER=postgres
+      - DB_PASS=password
+      - JWT_SECRET=supersecret1234567890supersecret1234567890supersecret1234567890
+    networks:
+      - ecommerce-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  product-service:
+    image: ecommerce-microservice/product-service:latest
+    container_name: product-service
+    depends_on:
+      - config-server
+      - postgres-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - DB_HOST=postgres-server
+      - DB_USER=postgres
+      - DB_PASS=password
+    networks:
+      - ecommerce-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  basket-service:
+    image: ecommerce-microservice/basket-service:latest
+    container_name: basket-service
+    depends_on:
+      - config-server
+      - redis-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - REDIS_HOST=redis-server
+    networks:
+      - ecommerce-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  payment-service:
+    image: ecommerce-microservice/payment-service:latest
+    container_name: payment-service
+    depends_on:
+      - config-server
+      - postgres-server
+      - rabbitmq-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - DB_HOST=postgres-server
+      - DB_USER=postgres
+      - DB_PASS=password
+      - DB_PASSWORD=password
+      - RABBITMQ_HOST=rabbitmq-server
+      - IYZICO_API_KEY=sandbox-api-key
+      - IYZICO_SECRET_KEY=sandbox-secret-key
+    networks:
+      - ecommerce-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  order-service:
+    image: ecommerce-microservice/order-service:latest
+    container_name: order-service
+    depends_on:
+      - config-server
+      - postgres-server
+      - rabbitmq-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - DB_HOST=postgres-server
+      - DB_USER=postgres
+      - DB_PASS=password
+      - RABBITMQ_HOST=rabbitmq-server
+    networks:
+      - ecommerce-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  gateway-server:
+    image: ecommerce-microservice/gateway-server:latest
+    container_name: gateway-server
+    depends_on:
+      - config-server
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JWT_SECRET=supersecret1234567890supersecret1234567890supersecret1234567890
+    networks:
+      - ecommerce-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
