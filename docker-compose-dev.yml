@@ -1,0 +1,25 @@
+services:
+  redis:
+    image: redis:alpine
+    container_name: dev-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: msvc-rabbitmq
+    ports:
+      - "5672:5672"   # Spring Boot uygulamalarının (Java) bağlanacağı AMQP portu
+      - "15672:15672" # Tarayıcıdan erişeceğin görsel yönetim paneli portu
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq # Konteyner kapandığında kuyruk verilerinin silinmemesi için
+
+volumes:
+  redis-data:
+  rabbitmq_data:
