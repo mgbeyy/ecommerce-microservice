@@ -260,5 +260,5 @@ The following architectural updates could be added to evolve this educational re
 
 For questions regarding this repository, architecture patterns, or portfolio queries, reach out through the following channels:
 
-* **LinkedIn**: [Your Name/Profile Placeholder](https://www.linkedin.com/in/zaidalmoughrabi)
-* **Email**: [zaidalmoughrabi@gmai.com](mailto:zaidalmoughrabi@gmai.com)
+* **LinkedIn**: [Zaid Almoughrabi](https://www.linkedin.com/in/zaidalmoughrabi)
+* **Email**: [zaidalmoughrabi@gmail.com](mailto:zaidalmoughrabi@gmail.com)
