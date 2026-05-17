@@ -99,6 +99,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return super.getHeader(name);
         }
 
+
+
         @Override
         public Enumeration<String> getHeaderNames() {
             Set<String> set = new HashSet<>(customHeaders.keySet());
